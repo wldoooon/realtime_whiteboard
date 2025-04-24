@@ -1,0 +1,123 @@
+/* Main container for positioning */
+.whiteboard-container {
+    position: relative;
+    width: fit-content;
+    margin: 20px auto;
+    padding-top: 60px; /* Increased space for top toolbar */
+    padding-left: 70px; /* Increased space for left toolbar */
+    background-color: #f8f9fa; /* Lighter, more modern background */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* More subtle, spread shadow */
+    border-radius: 8px; /* Rounded corners for the container */
+    overflow: hidden;
+}
+
+/* General toolbar styling */
+.toolbar {
+    position: absolute;
+    background: linear-gradient(to bottom, #ffffff, #f5f5f7); /* Subtle gradient */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06); /* Softer shadow */
+    display: flex;
+    align-items: center;
+    padding: 8px; /* Slightly more padding */
+    box-sizing: border-box;
+    z-index: 10;
+    border-radius: 6px; /* Rounded corners for toolbars */
+}
+
+/* Top Toolbar specific styles */
+.top-toolbar {
+    top: 10px; /* Moved down slightly from the edge */
+    left: 70px; /* Aligned with left toolbar width */
+    width: calc(100% - 80px); /* Account for margins */
+    height: 50px;
+    padding: 0 15px; /* Horizontal padding */
+    gap: 12px;
+    border-bottom: none; /* Removed border in favor of shadow */
+    justify-content: space-between; /* Space items evenly */
+}
+
+/* Left Toolbar specific styles */
+.left-toolbar {
+    top: 70px; /* Start below the top toolbar with gap */
+    left: 10px; /* Moved right slightly from the edge */
+    width: 60px;
+    height: calc(100% - 80px); /* Account for top margin */
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 15px 0; /* Vertical padding */
+    gap: 15px; /* More space between buttons */
+    border-right: none; /* Removed border in favor of shadow */
+}
+
+/* General button styling within toolbars */
+.toolbar button {
+    background-color: #ffffff; /* White background */
+    border: 1px solid #eaeaea; /* Very light border */
+    padding: 10px;
+    border-radius: 8px; /* More rounded corners */
+    cursor: pointer;
+    transition: all 0.2s ease; /* Smooth transition for all properties */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    min-height: 40px;
+    color: #555; /* Medium grey text */
+    font-weight: 500; /* Slightly bold */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* Subtle button shadow */
+}
+
+/* Hover effect for buttons */
+.toolbar button:hover {
+    background-color: #f8f8f8; /* Very light grey on hover */
+    border-color: #d0d0d0; /* Darker border on hover */
+    transform: translateY(-1px); /* Slight lift effect */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.08); /* Enhanced shadow on hover */
+}
+
+/* Styling for the active tool button */
+.toolbar button.active {
+    background: linear-gradient(to bottom, #4a90e2, #3d7dd5); /* Blue gradient */
+    border-color: #3d7dd5; /* Blue border */
+    color: white; /* White text */
+    box-shadow: 0 2px 4px rgba(74,144,226,0.3); /* Colored shadow */
+    transform: translateY(0); /* No lift when active */
+}
+
+/* Canvas area styling */
+.canvas-area {
+    position: relative;
+    background-color: #ffffff;
+    border-radius: 4px; /* Slightly rounded canvas corners */
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04); /* Very subtle shadow */
+}
+
+/* Style the placeholder text in top toolbar */
+.top-toolbar span {
+    font-weight: 600; /* Bolder */
+    margin-right: 20px;
+    color: #333; /* Darker text */
+    font-size: 16px; /* Larger font */
+    letter-spacing: -0.5px; /* Tighter letter spacing */
+}
+
+/* Add a divider between board name and buttons in top toolbar */
+.top-toolbar span::after {
+    content: '';
+    display: inline-block;
+    height: 24px;
+    width: 1px;
+    background-color: #e0e0e0;
+    margin-left: 20px;
+    vertical-align: middle;
+}
+
+/* Group buttons in top toolbar */
+.top-toolbar .button-group {
+    display: flex;
+    gap: 8px;
+    padding: 0 8px;
+    border-radius: 6px;
+    background-color: rgba(0,0,0,0.02); /* Very subtle background */
+}
