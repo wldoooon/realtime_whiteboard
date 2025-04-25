@@ -96,5 +96,4 @@ Follow these steps to get the project running locally:
 
 Contributions are welcome! If you'd like to contribute, please fork the repository and create a pull request. You can also open an issue for bugs or feature suggestions.
 
-*(Optional: Add more specific contribution guidelines if needed)*
 
