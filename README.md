@@ -3,7 +3,7 @@
 
 A web-based collaborative whiteboard application allowing multiple users to draw simultaneously in real-time. Built with Django Channels and React.
 
-[Whiteboard Screenshot](screenshot.png)
+![Whiteboard Screenshot](screenshot.png)
 
 ## ✨ Features
 
