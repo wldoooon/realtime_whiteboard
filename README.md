@@ -5,7 +5,7 @@ A web-based collaborative whiteboard application allowing multiple users to draw
 
 ![Whiteboard Screenshot](screenshot.png)
 
-## ✨ Features
+##  Features
 
 *   **Real-Time Collaboration:** See other users' drawings appear instantly.
 *   **Basic Drawing Tools:** Pen and Eraser functionality.
@@ -15,7 +15,7 @@ A web-based collaborative whiteboard application allowing multiple users to draw
 
 *(Planned Features: Color Picker, Brush Size, Shapes, Text Tool, Undo/Redo, etc.)*
 
-## 🚀 Tech Stack
+##  Tech Stack
 
 **Backend:**
 *   Python
@@ -32,7 +32,7 @@ A web-based collaborative whiteboard application allowing multiple users to draw
 **Database:**
 *   SQLite (Default for Development)
 
-## 🛠️ Setup & Installation
+##  Setup & Installation
 
 Follow these steps to get the project running locally:
 
