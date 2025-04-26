@@ -1,123 +1,294 @@
-/* Main container for positioning */
-.whiteboard-container {
-    position: relative;
-    width: fit-content;
-    margin: 20px auto;
-    padding-top: 60px; /* Increased space for top toolbar */
-    padding-left: 70px; /* Increased space for left toolbar */
-    background-color: #f8f9fa; /* Lighter, more modern background */
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* More subtle, spread shadow */
-    border-radius: 8px; /* Rounded corners for the container */
-    overflow: hidden;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segeo UI", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  :root {
+    --background-color: #f0f2f5;
+    --text-color: #333;
+    --topbar-bg: #ffffff;
+    --toolbar-bg: #ffffff;
+    --canvas-bg: #ffffff;
+    --grid-color-major: rgba(200, 200, 200, 0.2);
+    --grid-color-minor: rgba(200, 200, 200, 0.1);
+    --border-color: #eaeaea;
+    --hover-bg: #f1f5f9;
+    --active-bg: #eff6ff;
+    --active-color: #3b82f6;
+    --shadow-color: rgba(0, 0, 0, 0.15);
+    --chat-bg: #ffffff;
+    --chat-message-bg: #f5f7fa;
+    --system-message-bg: #e5e7eb;
+    --chat-border: #eaeaea;
+    --input-bg: #ffffff;
+    --zoom-controls-bg: rgba(255, 255, 255, 0.8);
+  }
+
+  .whiteboard-container {
+    background-color: var(--canvas-bg);
+    background-image: 
+        linear-gradient(var(--grid-color-major) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-color-major) 1px, transparent 1px),
+        linear-gradient(var(--grid-color-minor) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-color-minor) 1px, transparent 1px);
+    background-size: 50px 50px, 50px 50px, 10px 10px, 10px 10px;
+    width: 100%;
+    height: 100%;
+    cursor: crosshair;
+    box-shadow: 0 0 10px var(--shadow-color);
+    transition: background-color 0.3s;
+    transform-origin: 0 0;
 }
 
-/* General toolbar styling */
-.toolbar {
-    position: absolute;
-    background: linear-gradient(to bottom, #ffffff, #f5f5f7); /* Subtle gradient */
-    box-shadow: 0 2px 6px rgba(0,0,0,0.06); /* Softer shadow */
+  
+ 
+  .toolbar {
+    position: fixed;
+    left: 50%;
+    bottom: 30px;
+    transform: translateX(-50%);
     display: flex;
     align-items: center;
-    padding: 8px; /* Slightly more padding */
-    box-sizing: border-box;
-    z-index: 10;
-    border-radius: 6px; /* Rounded corners for toolbars */
+    background: var(--toolbar-bg);
+    border-radius: 12px;
+    box-shadow: 0 10px 25px var(--shadow-color);
+    padding: 0.5rem;
+    z-index: 1000;
+    transition: all 0.3s ease, background-color 0.3s;
 }
 
-/* Top Toolbar specific styles */
-.top-toolbar {
-    top: 10px; /* Moved down slightly from the edge */
-    left: 70px; /* Aligned with left toolbar width */
-    width: calc(100% - 80px); /* Account for margins */
-    height: 50px;
-    padding: 0 15px; /* Horizontal padding */
-    gap: 12px;
-    border-bottom: none; /* Removed border in favor of shadow */
-    justify-content: space-between; /* Space items evenly */
+.toolbar:hover {
+    box-shadow: 0 15px 30px var(--shadow-color);
 }
 
-/* Left Toolbar specific styles */
-.left-toolbar {
-    top: 70px; /* Start below the top toolbar with gap */
-    left: 10px; /* Moved right slightly from the edge */
-    width: 60px;
-    height: calc(100% - 80px); /* Account for top margin */
-    flex-direction: column;
+/* Tool sections */
+.tool-section {
+    display: flex;
     align-items: center;
-    justify-content: flex-start;
-    padding: 15px 0; /* Vertical padding */
-    gap: 15px; /* More space between buttons */
-    border-right: none; /* Removed border in favor of shadow */
+    padding: 0 0.5rem;
 }
 
-/* General button styling within toolbars */
-.toolbar button {
-    background-color: #ffffff; /* White background */
-    border: 1px solid #eaeaea; /* Very light border */
-    padding: 10px;
-    border-radius: 8px; /* More rounded corners */
+.tool-section:not(:last-child) {
+    border-right: 1px solid var(--border-color);
+    margin-right: 0.5rem;
+    padding-right: 0.5rem;
+    transition: border-color 0.3s;
+}
+
+/* Tool dropdown */
+.tool-dropdown {
+    position: relative;
+}
+
+.submenu {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--toolbar-bg);
+    border-radius: 8px;
+    box-shadow: 0 5px 15px var(--shadow-color);
+    padding: 8px;
+    display: none;
+    flex-direction: column;
+    min-width: 150px;
+    margin-bottom: 10px;
+    z-index: 100;
+    transition: background-color 0.3s;
+}
+
+.tool-dropdown:hover .submenu {
+    display: flex;
+}
+
+.submenu::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 8px;
+    border-style: solid;
+    border-color: var(--toolbar-bg) transparent transparent transparent;
+    transition: border-color 0.3s;
+}
+
+.subtool {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    color: var(--text-color);
     cursor: pointer;
-    transition: all 0.2s ease; /* Smooth transition for all properties */
+    text-align: left;
+    width: 100%;
+    margin-bottom: 4px;
+    transition: background-color 0.2s, color 0.3s;
+}
+
+.subtool:last-child {
+    margin-bottom: 0;
+}
+
+.subtool:hover {
+    background-color: var(--hover-bg);
+}
+
+.subtool.active {
+    background-color: var(--active-bg);
+    color: var(--active-color);
+}
+
+.subtool i {
+    margin-right: 8px;
+    width: 16px;
+    text-align: center;
+}
+
+.tool {
+    background: transparent;
+    border: none;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 40px;
-    min-height: 40px;
-    color: #555; /* Medium grey text */
-    font-weight: 500; /* Slightly bold */
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* Subtle button shadow */
-}
-
-/* Hover effect for buttons */
-.toolbar button:hover {
-    background-color: #f8f8f8; /* Very light grey on hover */
-    border-color: #d0d0d0; /* Darker border on hover */
-    transform: translateY(-1px); /* Slight lift effect */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.08); /* Enhanced shadow on hover */
-}
-
-/* Styling for the active tool button */
-.toolbar button.active {
-    background: linear-gradient(to bottom, #4a90e2, #3d7dd5); /* Blue gradient */
-    border-color: #3d7dd5; /* Blue border */
-    color: white; /* White text */
-    box-shadow: 0 2px 4px rgba(74,144,226,0.3); /* Colored shadow */
-    transform: translateY(0); /* No lift when active */
-}
-
-/* Canvas area styling */
-.canvas-area {
+    cursor: pointer;
+    color: var(--text-color);
+    font-size: 1.2rem;
+    transition: all 0.2s ease, color 0.3s, background-color 0.3s;
     position: relative;
-    background-color: #ffffff;
-    border-radius: 4px; /* Slightly rounded canvas corners */
-    box-shadow: 0 1px 4px rgba(0,0,0,0.04); /* Very subtle shadow */
+    margin: 0 0.2rem;
 }
 
-/* Style the placeholder text in top toolbar */
-.top-toolbar span {
-    font-weight: 600; /* Bolder */
-    margin-right: 20px;
-    color: #333; /* Darker text */
-    font-size: 16px; /* Larger font */
-    letter-spacing: -0.5px; /* Tighter letter spacing */
+.tool.has-submenu {
+    padding-right: 5px;
 }
 
-/* Add a divider between board name and buttons in top toolbar */
-.top-toolbar span::after {
+.submenu-icon {
+    font-size: 0.7rem;
+    position: absolute;
+    bottom: 6px;
+    right: 6px;
+}
+
+.tool:hover {
+    background-color: var(--hover-bg);
+    color: var(--active-color);
+    transform: translateY(-2px);
+}
+
+.tool.active {
+    background-color: var(--active-bg);
+    color: var(--active-color);
+    box-shadow: 0 2px 10px rgba(59, 130, 246, 0.2);
+}
+
+/* Disabled tool style */
+.tool.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.tool.disabled:hover {
+    transform: none;
+    background-color: transparent;
+}
+
+/* Ripple effect */
+.tool::after {
     content: '';
-    display: inline-block;
-    height: 24px;
-    width: 1px;
-    background-color: #e0e0e0;
-    margin-left: 20px;
-    vertical-align: middle;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(59, 130, 246, 0.2);
+    border-radius: 8px;
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.3s ease;
 }
 
-/* Group buttons in top toolbar */
-.top-toolbar .button-group {
-    display: flex;
-    gap: 8px;
-    padding: 0 8px;
-    border-radius: 6px;
-    background-color: rgba(0,0,0,0.02); /* Very subtle background */
+.tool:active::after {
+    opacity: 1;
+    transform: scale(1);
+    transition: 0s;
 }
+
+/* Color picker */
+.color-picker {
+    position: relative;
+    margin: 0 0.5rem;
+    width: 3rem;
+    height: 3rem;
+}
+
+.color-picker input[type="color"] {
+    opacity: 0;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.color-preview {
+    position: absolute;
+    width: 2rem;
+    height: 2rem;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background-color: #000;
+    border: 2px solid var(--toolbar-bg);
+    box-shadow: 0 2px 5px var(--shadow-color);
+    pointer-events: none;
+    transition: border-color 0.3s;
+}
+
+/* Stroke width selector */
+.stroke-width-selector {
+    border: none;
+    background-color: var(--hover-bg);
+    border-radius: 8px;
+    padding: 0.6rem;
+    color: var(--text-color);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin: 0 0.5rem;
+    outline: none;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.stroke-width-selector:focus {
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+/* Tooltip styles */
+.tool[title]:hover::before {
+    content: attr(title);
+    position: absolute;
+    top: -35px;
+    background-color: #334155;
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.tool[title]:hover::after {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: #334155 transparent transparent transparent;
+} 

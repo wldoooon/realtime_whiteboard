@@ -1,9 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Stage, Layer, Rect, Line } from 'react-konva';
-import './TopToolbar';
-import './LeftToolbar';
-import TopToolbar from './TopToolbar';
-import LeftToolbar from './LeftToolbar';
+import Toolbar from './Toolbar';
+import './Whiteboard.css';
 
 
 function Whiteboard() {
@@ -12,12 +10,11 @@ function Whiteboard() {
     const [points, setPoints] = useState([]);
     const [currentTool, setCurrentTool] = useState('pen');
     
-    const stageWidth = 1280; 
-    const stageHeight = 720; 
+    const stageWidth = 1920; 
+    const stageHeight = 1080; 
 
     const ws = useRef(null);
 
-    // 
     const handleToolSelect = (tool) => {
         console.log(`Selected tool: ${tool}`);
         setCurrentTool(tool);
@@ -123,14 +120,8 @@ function Whiteboard() {
 
 
     return (
-        <div className='whiteboard-container' style={{
-            border : "2px solid",
-            margin : '20px auto',
-            width : stageWidth, 
-            height : stageHeight            
-        }}>
-        <TopToolbar onTollSelect={handleToolSelect}/>
-        <LeftToolbar onTollSelect={handleToolSelect} currentTool={currentTool} />
+        <div className='whiteboard-container'>
+        <Toolbar/>
 
         <Stage 
         width={stageWidth} 
