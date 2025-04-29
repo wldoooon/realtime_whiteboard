@@ -63,7 +63,6 @@
     box-shadow: 0 15px 30px var(--shadow-color);
 }
 
-/* Tool sections */
 .tool-section {
     display: flex;
     align-items: center;
@@ -77,7 +76,6 @@
     transition: border-color 0.3s;
 }
 
-/* Tool dropdown */
 .tool-dropdown {
     position: relative;
 }
@@ -189,7 +187,6 @@
     box-shadow: 0 2px 10px rgba(59, 130, 246, 0.2);
 }
 
-/* Disabled tool style */
 .tool.disabled {
     opacity: 0.5;
     cursor: not-allowed;
@@ -200,7 +197,6 @@
     background-color: transparent;
 }
 
-/* Ripple effect */
 .tool::after {
     content: '';
     position: absolute;
@@ -219,7 +215,6 @@
     transition: 0s;
 }
 
-/* Color picker */
 .color-picker {
     position: relative;
     margin: 0 0.5rem;
@@ -250,7 +245,6 @@
     transition: border-color 0.3s;
 }
 
-/* Stroke width selector */
 .stroke-width-selector {
     border: none;
     background-color: var(--hover-bg);
@@ -268,7 +262,6 @@
     box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
 }
 
-/* Tooltip styles */
 .tool[title]:hover::before {
     content: attr(title);
     position: absolute;
