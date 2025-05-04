@@ -45,7 +45,7 @@ Follow these steps to get the project running locally:
 
 1.  **Clone the repository:**
     ```bash
-    git clone <your-repository-url>
+    git clone https://github.com/wldoooon/realtime_whiteboard
     cd whiteBoard-Project
     ```
 2.  **Create and activate a virtual environment:**
@@ -63,7 +63,6 @@ Follow these steps to get the project running locally:
     ```bash
     daphne whiteBoardProject.asgi:application
     ```
-    *(Or `uvicorn whiteBoardProject.asgi:application --reload` if using Uvicorn)*
     The backend should now be running, typically on `http://127.0.0.1:8000`.
 
 **Frontend Setup:**
