@@ -1,11 +1,22 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
-function Toolbar() {
+function Toolbar({ onColorChange, onStrokeWidthChange }) {
+    const [selectedColor, setSelectedColor] = useState('#000000');
+    const [strokeWidth, setStrokeWidth] = useState(5); 
+    
+    useEffect(() => {
+        if (onColorChange) {
+            onColorChange(selectedColor);
+        }
+        if (onStrokeWidthChange) {
+            onStrokeWidthChange(strokeWidth);
+        }
+    }, [selectedColor, onColorChange, strokeWidth, onStrokeWidthChange]);
     return (
         <div className="toolbar">
             <div className="tool-section">
                 <div className="tool-dropdown">
-                    <button className="tool active has-submenu" id="pen" title="Pen">
+                    <button className="tool active has-submenu" id="pen">
                         <i className="fas fa-pen"></i>
                         <i className="fas fa-caret-down submenu-icon"></i>
                     </button>
@@ -21,20 +32,20 @@ function Toolbar() {
                         </button>
                     </div>
                 </div>
-                <button className="tool" id="highlighter" title="Highlighter">
+                <button className="tool" id="highlighter">
                     <i className="fas fa-highlighter"></i>
                 </button>
-                <button className="tool" id="eraser" title="Eraser">
+                <button className="tool" id="eraser">
                     <i className="fas fa-eraser"></i>
                 </button>
             </div>
 
             <div className="tool-section">
-                    <button className="tool" id="text" title="Text">
+                    <button className="tool" id="text">
                         <i className="fas fa-font"></i>
                     </button>
                     <div className="tool-dropdown">
-                        <button className="tool has-submenu" id="shapes" title="Shapes">
+                        <button className="tool has-submenu" id="shapes">
                             <i className="fas fa-shapes"></i>
                             <i className="fas fa-caret-down submenu-icon"></i>
                         </button>
@@ -57,8 +68,13 @@ function Toolbar() {
                         </div>
                     </div>
                     <div className="color-picker">
-                        <input type="color" id="colorPicker" defaultValue="#000000"/>
-                        <span className="color-preview"></span>
+                        <input 
+                            type="color" 
+                            id="colorPicker" 
+                            value={selectedColor}
+                            onChange={(e) => setSelectedColor(e.target.value)}
+                        />
+                        <span className="color-preview" style={{ backgroundColor: selectedColor }}></span>
                     </div>
                 </div>
 
@@ -74,13 +90,19 @@ function Toolbar() {
                     </button>
                 </div>
 
-                <div className="tool-section">
-                    <select id="stroke-width" className="stroke-width-selector" title="Stroke Width" defaultValue="5">
-                        <option value="2">Thin</option>
-                        <option value="5">Medium</option>
-                        <option value="10">Thick</option>
-                        <option value="20">Extra Thick</option>
-                    </select>
+                <div className="tool-section stroke-width-section">
+                    <label htmlFor="stroke-width" className="stroke-width-label">Width</label>
+                    <input 
+                        type="range" 
+                        id="stroke-width" 
+                        className="stroke-width-slider" 
+                        min="1" 
+                        max="50" 
+                        value={strokeWidth} 
+                        title="Stroke Width"
+                        onChange={(e) => setStrokeWidth(parseInt(e.target.value, 10))}
+                    />
+                    <span id="stroke-width-value" className="stroke-width-value">{strokeWidth}</span>
                     <button className="tool" id="save" title="Save">
                         <i className="fas fa-save"></i>
                     </button>

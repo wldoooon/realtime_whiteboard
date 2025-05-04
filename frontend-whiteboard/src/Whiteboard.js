@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { Stage, Layer, Rect, Line } from 'react-konva';
+import { Stage, Layer, Rect, Line, Circle, Text } from 'react-konva'; 
 import Toolbar from './Toolbar';
 import './Whiteboard.css';
 
@@ -12,6 +12,7 @@ function Whiteboard() {
     const [currentTool, setCurrentTool] = useState('pen');
     const [color, setColor] = useState('black');
     const [remoteDrawing, setRemoteDrawing] = useState({});
+    const [remoteCursors, setRemoteCursors] = useState({}); 
     const [lineWidth, setLineWidth] = useState(3);
     const [isWsConnected, setIsWsConnected] = useState(false); 
     
@@ -69,6 +70,11 @@ function Whiteboard() {
                         ...prev,
                         [data.userId] : data.points
                     }));
+                    // Set initial cursor position on draw_start
+                    setRemoteCursors(prev => ({
+                        ...prev,
+                        [data.userId]: { x: data.points[0], y: data.points[1] }
+                    }));
                     break;
                 case 'draw_move':
                     console.log('Another user continued drawing (point) : ', data.points);
@@ -79,6 +85,11 @@ function Whiteboard() {
                             ...data.points
                         ]
                     }));
+                    // Update cursor position on draw_move
+                    setRemoteCursors(prev => ({
+                        ...prev,
+                        [data.userId]: { x: data.points[data.points.length - 2], y: data.points[data.points.length - 1] }
+                    }));
                     break;
                 case 'draw_end':
                     if (data.lineData && data.lineData.length > 0) {
@@ -88,6 +99,12 @@ function Whiteboard() {
                     setRemoteDrawing(prev => {
                         const newState = { ...prev };
                         delete newState[data.userId]; 
+                        return newState;
+                    });
+                    // Remove cursor on draw_end
+                    setRemoteCursors(prev => {
+                        const newState = { ...prev };
+                        delete newState[data.userId];
                         return newState;
                     });
                     break;
@@ -173,6 +190,7 @@ function Whiteboard() {
         onMouseUp={handleMouseUp}
         >
             <Layer>
+                {/* Render completed lines */}
                 {lines.map((linePoints, idx) => (
                     <Line
                         key={idx}
@@ -183,6 +201,7 @@ function Whiteboard() {
                         lineJoin="round"
                     />
                 ))}
+                {/* Render local drawing */}
                 {isDrawing && localPoints.length > 0 && (
                     <Line
                         points={localPoints}
@@ -192,10 +211,11 @@ function Whiteboard() {
                         lineJoin="round"
                     />
                 )}
+                {/* Render remote drawings */}
                 {Object.entries(remoteDrawing).map(([userId, points]) => (
                     points && points.length > 1 && (
                         <Line
-                            key={`remote-${userId}`}
+                            key={`remote-line-${userId}`}
                             points={points}
                             stroke="#df4b26" 
                             strokeWidth={3}
@@ -203,6 +223,24 @@ function Whiteboard() {
                             lineJoin="round"
                         />
                     )
+                ))}
+                {/* Render remote cursors */}
+                {Object.entries(remoteCursors).map(([userId, pos]) => (
+                    <React.Fragment key={`remote-cursor-${userId}`}>
+                        <Circle 
+                            x={pos.x}
+                            y={pos.y}
+                            radius={5}
+                            fill="#df4b26"
+                        />
+                        <Text
+                            x={pos.x + 10} // Offset text slightly
+                            y={pos.y + 10}
+                            text={userId} // Display the user ID
+                            fontSize={12}
+                            fill="#df4b26"
+                        />
+                    </React.Fragment>
                 ))}
             </Layer>
         </Stage>
