@@ -9,12 +9,16 @@ function Whiteboard() {
     const [lines, setLines] = useState([]);
     const [isDrawing, setIsDrawing] = useState(false);
     const [localPoints, setLocalPoints] = useState([]);
-    const [currentTool, setCurrentTool] = useState('pen');
-    const [color, setColor] = useState('black');
+    const [selectedColor, setSelectedColor] = useState('#00000');
+    const [selectWidth, setSelectWidth] = useState(3);
     const [remoteDrawing, setRemoteDrawing] = useState({});
     const [remoteCursors, setRemoteCursors] = useState({}); 
-    const [lineWidth, setLineWidth] = useState(3);
     const [isWsConnected, setIsWsConnected] = useState(false); 
+    
+    const handleColor = (color) => {
+        console.log(`Selected color: ${selectedColor}`);
+        setSelectedColor(color);
+    }
     
     const stageWidth = 1920; 
     const stageHeight = 1080; 
@@ -22,12 +26,7 @@ function Whiteboard() {
     const ws = useRef(null);
     const userIdRef = useRef(`user_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`);
     const lastMoveTimeRef = useRef(0); 
-
-    const handleToolSelect = (tool) => {
-        console.log(`Selected tool: ${tool}`);
-        setCurrentTool(tool);
-    };
-
+    
     const sendWebSocketMessage = useCallback((message) => {
         if (ws.current && ws.current.readyState === WebSocket.OPEN) {
             ws.current.send(JSON.stringify({
@@ -70,7 +69,6 @@ function Whiteboard() {
                         ...prev,
                         [data.userId] : data.points
                     }));
-                    // Set initial cursor position on draw_start
                     setRemoteCursors(prev => ({
                         ...prev,
                         [data.userId]: { x: data.points[0], y: data.points[1] }
@@ -85,7 +83,6 @@ function Whiteboard() {
                             ...data.points
                         ]
                     }));
-                    // Update cursor position on draw_move
                     setRemoteCursors(prev => ({
                         ...prev,
                         [data.userId]: { x: data.points[data.points.length - 2], y: data.points[data.points.length - 1] }
@@ -101,7 +98,6 @@ function Whiteboard() {
                         delete newState[data.userId]; 
                         return newState;
                     });
-                    // Remove cursor on draw_end
                     setRemoteCursors(prev => {
                         const newState = { ...prev };
                         delete newState[data.userId];
@@ -164,15 +160,16 @@ function Whiteboard() {
         }
 
         const completedLine = [...localPoints];
+        const newLine = {points : completedLine, color : selectedColor, width : selectWidth};
         setIsDrawing(false);
 
-        setLines((prevLines) => [...prevLines, completedLine]); 
+        setLines((prevLines) => [...prevLines, newLine]); 
         setLocalPoints([]);
 
         if (isWsConnected && completedLine.length > 0) { 
             sendWebSocketMessage({
                 type: 'draw_end',
-                lineData: completedLine,
+                lineData: newLine
             });
         }
     }
@@ -180,7 +177,13 @@ function Whiteboard() {
 
     return (
         <div className='whiteboard-container'>
-        <Toolbar/>
+        <Toolbar
+            handleColor={handleColor}
+            selectedColor={selectedColor}
+            setSelectedColor={setSelectedColor}
+            setStrokeWidth={setSelectWidth}
+            strokeWidth={selectWidth}
+        />
 
         <Stage 
         width={stageWidth} 
@@ -190,55 +193,51 @@ function Whiteboard() {
         onMouseUp={handleMouseUp}
         >
             <Layer>
-                {/* Render completed lines */}
                 {lines.map((linePoints, idx) => (
                     <Line
                         key={idx}
-                        points={linePoints}
-                        stroke="black"
-                        strokeWidth={3}
+                        points={linePoints.points}
+                        stroke={linePoints.color}
+                        strokeWidth={linePoints.width}
                         lineCap="round"
                         lineJoin="round"
                     />
                 ))}
-                {/* Render local drawing */}
                 {isDrawing && localPoints.length > 0 && (
                     <Line
                         points={localPoints}
-                        stroke="black"
-                        strokeWidth={3}
+                        stroke={selectedColor}
+                        strokeWidth={selectWidth}
                         lineCap="round"
                         lineJoin="round"
                     />
                 )}
-                {/* Render remote drawings */}
                 {Object.entries(remoteDrawing).map(([userId, points]) => (
                     points && points.length > 1 && (
                         <Line
                             key={`remote-line-${userId}`}
                             points={points}
-                            stroke="#df4b26" 
+                            stroke={selectedColor} 
                             strokeWidth={3}
                             lineCap="round"
                             lineJoin="round"
                         />
                     )
                 ))}
-                {/* Render remote cursors */}
                 {Object.entries(remoteCursors).map(([userId, pos]) => (
                     <React.Fragment key={`remote-cursor-${userId}`}>
                         <Circle 
                             x={pos.x}
                             y={pos.y}
                             radius={5}
-                            fill="#df4b26"
+                            fill={selectedColor}
                         />
                         <Text
-                            x={pos.x + 10} // Offset text slightly
+                            x={pos.x + 10} 
                             y={pos.y + 10}
-                            text={userId} // Display the user ID
+                            text={userId} 
                             fontSize={12}
-                            fill="#df4b26"
+                            fill={selectedColor}
                         />
                     </React.Fragment>
                 ))}
