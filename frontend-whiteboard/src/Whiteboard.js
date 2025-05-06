@@ -13,6 +13,7 @@ function Whiteboard() {
     const [selectWidth, setSelectWidth] = useState(3);
     const [remoteDrawing, setRemoteDrawing] = useState({});
     const [remoteCursors, setRemoteCursors] = useState({}); 
+    const [remoteStyles, setRemoteStyles] = useState({});
     const [isWsConnected, setIsWsConnected] = useState(false); 
     
     const handleColor = (color) => {
@@ -73,6 +74,14 @@ function Whiteboard() {
                         ...prev,
                         [data.userId]: { x: data.points[0], y: data.points[1] }
                     }));
+                    // Store color and width for this user's drawing
+                    setRemoteStyles(prev => ({
+                        ...prev,
+                        [data.userId]: { 
+                            color: data.color || '#000000', 
+                            width: data.width || 3 
+                        }
+                    }));
                     break;
                 case 'draw_move':
                     console.log('Another user continued drawing (point) : ', data.points);
@@ -89,8 +98,8 @@ function Whiteboard() {
                     }));
                     break;
                 case 'draw_end':
-                    if (data.lineData && data.lineData.length > 0) {
-                        console.log(`{userIdRef.current} ended drawing`);
+                    if (data.lineData && data.lineData.points && data.lineData.points.length > 0) {
+                        console.log(`${data.userId} ended drawing`);
                         setLines((prevLines) => [...prevLines, data.lineData]);
                     }
                     setRemoteDrawing(prev => {
@@ -99,6 +108,11 @@ function Whiteboard() {
                         return newState;
                     });
                     setRemoteCursors(prev => {
+                        const newState = { ...prev };
+                        delete newState[data.userId];
+                        return newState;
+                    });
+                    setRemoteStyles(prev => {
                         const newState = { ...prev };
                         delete newState[data.userId];
                         return newState;
@@ -129,6 +143,8 @@ function Whiteboard() {
         sendWebSocketMessage({
             type: 'draw_start',
             points : startPoint,
+            color: selectedColor,
+            width: selectWidth,
         });
     };
 
@@ -217,8 +233,8 @@ function Whiteboard() {
                         <Line
                             key={`remote-line-${userId}`}
                             points={points}
-                            stroke={selectedColor} 
-                            strokeWidth={3}
+                            stroke={remoteStyles[userId]?.color || '#000000'} 
+                            strokeWidth={remoteStyles[userId]?.width || 3}
                             lineCap="round"
                             lineJoin="round"
                         />
@@ -230,14 +246,14 @@ function Whiteboard() {
                             x={pos.x}
                             y={pos.y}
                             radius={5}
-                            fill={selectedColor}
+                            fill={remoteStyles[userId]?.color || '#000000'}
                         />
                         <Text
                             x={pos.x + 10} 
                             y={pos.y + 10}
                             text={userId} 
                             fontSize={12}
-                            fill={selectedColor}
+                            fill={remoteStyles[userId]?.color || '#000000'}
                         />
                     </React.Fragment>
                 ))}

@@ -1,8 +1,7 @@
-
 .theme-toggle {
   position: fixed;
-  top: 20px;
-  right: 20px;
+  top: 45px;
+  right: 50px;
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -51,7 +50,7 @@
 }
 
 .theme-toggle::after {
-  content: '';
+  content: "";
   position: absolute;
   top: -10px;
   right: 15px;
