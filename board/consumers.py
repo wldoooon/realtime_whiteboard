@@ -32,7 +32,7 @@ class WhiteboardConsumer(AsyncWebsocketConsumer):
         try: 
             data = json.loads(event['message'])
             sender_channel_name = event['sender_channel_name']
-            user_id = data.get('userId') # Extract userId
+            user_id = data.get('userId') 
             
             if sender_channel_name == self.channel_name:
                 return

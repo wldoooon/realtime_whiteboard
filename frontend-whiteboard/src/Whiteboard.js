@@ -74,7 +74,6 @@ function Whiteboard() {
                         ...prev,
                         [data.userId]: { x: data.points[0], y: data.points[1] }
                     }));
-                    // Store color and width for this user's drawing
                     setRemoteStyles(prev => ({
                         ...prev,
                         [data.userId]: { 
@@ -217,6 +216,8 @@ function Whiteboard() {
                         strokeWidth={linePoints.width}
                         lineCap="round"
                         lineJoin="round"
+                        tension={0.5}
+                        bezier={true}
                     />
                 ))}
                 {isDrawing && localPoints.length > 0 && (
@@ -226,6 +227,8 @@ function Whiteboard() {
                         strokeWidth={selectWidth}
                         lineCap="round"
                         lineJoin="round"
+                        tension={0.5}
+                        bezier={true}
                     />
                 )}
                 {Object.entries(remoteDrawing).map(([userId, points]) => (
@@ -237,6 +240,8 @@ function Whiteboard() {
                             strokeWidth={remoteStyles[userId]?.width || 3}
                             lineCap="round"
                             lineJoin="round"
+                            tension={0.5}
+                            bezier={true}
                         />
                     )
                 ))}
